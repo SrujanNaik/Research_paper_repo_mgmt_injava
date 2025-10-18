@@ -4,11 +4,11 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>DataNest</title>
-    <link rel="icon" type="image/x-icon" href="/images/icon.jpeg">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/icon.jpeg}">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <link rel="stylesheet" href="../static/CSS/admin.css">
+    <link rel="stylesheet" th:href="@{/CSS/admin.css}">
 </head>
 <body>
     <div class="heading-and-dot">
@@ -373,8 +373,138 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr th:each="row : ${data}">
-                        <td th:each="entry : ${row}" th:text="${entry.value}"></td>
+                    <!-- Journal Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'JOURNAL'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.AUTHORS}"></td>
+                        <td th:text="${row.YEAR_OF_PUBLICATION}"></td>
+                        <td th:text="${row.TITLE}"></td>
+                        <td th:text="${row.JOURNAL_NAME}"></td>
+                        <td th:text="${row.VOLUME_PAGE_NUMBER}"></td>
+                        <td th:text="${row.ISSN}"></td>
+                        <td th:text="${row.IMPACT_FACTOR}"></td>
+                    </tr>
+                    
+                    <!-- Conference Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'CONFERENCE'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR_OF_PUBLICATION}"></td>
+                        <td th:text="${row.AUTHOR}"></td>
+                        <td th:text="${row.TITLE}"></td>
+                        <td th:text="${row.CONFERENCE_NAME}"></td>
+                        <td th:text="${row.VOLUME_PAGE_COUNT}"></td>
+                        <td th:text="${row.ORGANIZED_BY}"></td>
+                        <td th:text="${row.PLACE_OF_CONFERENCE}"></td>
+                    </tr>
+                    
+                    <!-- Book Chapter Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'BOOKCHAPTER'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR_OF_PUBLICATION}"></td>
+                        <td th:text="${row.AUTHOR}"></td>
+                        <td th:text="${row.CHAPTER_TITLE}"></td>
+                        <td th:text="${row.BOOK_TITLE}"></td>
+                        <td th:text="${row.PUBLISHER}"></td>
+                        <td th:text="${row.ISSN}"></td>
+                    </tr>
+                    
+                    <!-- Funded Research Project Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'FUNDEDRESEARCHPROJECT'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                        <td th:text="${row.PRINCIPAL_INVESTIGATOR}"></td>
+                        <td th:text="${row.CO_INVESTIGATOR}"></td>
+                        <td th:text="${row.TITLE}"></td>
+                        <td th:text="${row.FUNDING_AGENCY}"></td>
+                        <td th:text="${row.AMOUNT}"></td>
+                        <td th:text="${row.DURATION}"></td>
+                    </tr>
+                    
+                    <!-- Research Proposal Submitted Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'RESEARCHPROPOSALSUBMITTED'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                        <td th:text="${row.PRINCIPAL_INVESTIGATOR}"></td>
+                        <td th:text="${row.CO_INVESTIGATOR}"></td>
+                        <td th:text="${row.TITLE}"></td>
+                        <td th:text="${row.FUNDING_AGENCY}"></td>
+                        <td th:text="${row.AMOUNT}"></td>
+                    </tr>
+                    
+                    <!-- Consultancy Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'CONSULTANCY'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.AMOUNT}"></td>
+                        <td th:text="${row.FACULTY_NAME}"></td>
+                        <td th:text="${row.ORGANIZATION}"></td>
+                        <td th:text="${row.CONSULTANCY_PROVIDED}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                    </tr>
+                    
+                    <!-- Product Development Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'PRODUCTDEVELOPMENT'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.PRODUCT_NAME}"></td>
+                        <td th:text="${row.DESCRIPTION}"></td>
+                        <td th:text="${row.FACULTY_NAME}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                    </tr>
+                    
+                    <!-- Patent Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'PATENT'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                        <td th:text="${row.INVENTOR_NAME}"></td>
+                        <td th:text="${row.PATENT_NUMBER}"></td>
+                        <td th:text="${row.TITLE}"></td>
+                        <td th:text="${row.STATUS}"></td>
+                    </tr>
+                    
+                    <!-- FDP Workshop Seminar Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'FDPWORKSHOPSEMINAR'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                        <td th:text="${row.PROGRAM_NAME}"></td>
+                        <td th:text="${row.DURATION}"></td>
+                        <td th:text="${row.ORGANIZED_BY}"></td>
+                        <td th:text="${row.FACULTY_NAME}"></td>
+                    </tr>
+                    
+                    <!-- MOUCS Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'MOUCS'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.DATE_OF_SIGNING}"></td>
+                        <td th:text="${row.DURATION}"></td>
+                        <td th:text="${row.ORGANIZATION}"></td>
+                        <td th:text="${row.PURPOSE}"></td>
+                    </tr>
+                    
+                    <!-- Achievements and Awards Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'ACHIEVEMENTSANDAWARDS'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                        <td th:text="${row.FACULTY_STUDENT_NAME}"></td>
+                        <td th:text="${row.ACHIEVEMENT}"></td>
+                        <td th:text="${row.AWARD_BY}"></td>
+                    </tr>
+                    
+                    <!-- MOUS Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'MOUS'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.DATE_OF_SIGNING}"></td>
+                        <td th:text="${row.ORGANIZATION}"></td>
+                        <td th:text="${row.PURPOSE}"></td>
+                        <td th:text="${row.VALIDITY}"></td>
+                    </tr>
+                    
+                    <!-- Funded Student Project Data -->
+                    <tr th:each="row : ${data}" th:if="${selected_table == 'FUNDEDSTUDENTPROJECT'}">
+                        <td th:text="${row.DEPARTMENT_ID}"></td>
+                        <td th:text="${row.YEAR}"></td>
+                        <td th:text="${row.STUDENT_NAME}"></td>
+                        <td th:text="${row.PROJECT_TITLE}"></td>
+                        <td th:text="${row.FUNDING_AGENCY}"></td>
+                        <td th:text="${row.AMOUNT}"></td>
                     </tr>
                 </tbody>
             </table>

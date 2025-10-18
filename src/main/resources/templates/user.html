@@ -1,21 +1,27 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <title>DataNest</title>
-    <link rel="icon" type="image/x-icon" href="{{ url_for('static', filename='images/icon.jpeg') }}">
+    <link rel="icon" type="image/x-icon" th:href="@{/images/icon.jpeg}">
     <meta name="description" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="../static/CSS/user.css">
+    <link rel="stylesheet" th:href="@{/CSS/user.css}">
 </head>
 <body>
     <div class="container">
         <h3>Information Repository</h3>
+        
+        <!-- Display success/error message -->
+        <div th:if="${message}" style="padding: 10px; margin: 10px 0; background-color: #d4edda; border: 1px solid #c3e6cb; color: #155724; border-radius: 5px;">
+            <p th:text="${message}"></p>
+        </div>
+        
         <form action="/user" method="POST" id="optionForm">
             <div class="form-group">
                 <label for="departments">Choose a department:</label>
-                <select id="departments" name="department">
+                <select id="departments" name="department" required>
                     <option value="AIML">AIML</option>
                     <option value="CSE">CSE</option>
                     <option value="ISE">ISE</option>
@@ -35,7 +41,7 @@
                     <option value="Consultancy">Consultancy</option>
                     <option value="ProductDevelopment">Product Development</option>
                     <option value="Patent">Patent</option>
-                    <option value="FDPWorkshopSeminarAttendedByFaculty">FDP/Workshop/Seminar Attended by Faculty</option>
+                    <option value="FDPWorkshopSeminar">FDP/Workshop/Seminar Attended by Faculty</option>
                     <option value="MOUCS">MOUCS / Swayam / Coursera any other certification courses</option>
                     <option value="AchievementsAndAwards">Achievements and Awards</option>
                     <option value="MOUS">MOUS</option>
@@ -43,14 +49,11 @@
                 </select>
             </div>
 
-            <div id="textFields">
-
-            </div>
+            <div id="textFields"></div>
 
             <button type="submit">Submit</button>
         </form>
     </div>
-
 
     <script>
         document.getElementById('options').addEventListener('change', function() {
@@ -63,45 +66,64 @@
                 var optionFields = getOptionFields(option);
                 textFields.appendChild(optionFields);
             }
-            
         });
     
         function getOptionFields(option) {
             var optionFields = document.createElement('div');
             optionFields.classList.add('form-group');
+            optionFields.style.border = '1px solid #ddd';
+            optionFields.style.padding = '15px';
+            optionFields.style.marginTop = '10px';
+            optionFields.style.borderRadius = '5px';
+            
+            var title = document.createElement('h4');
+            title.textContent = option;
+            title.style.marginTop = '0';
+            optionFields.appendChild(title);
     
             var optionData = {
-                'Journal': ['Year of publication', 'Authors', 'Title', 'Journal name', 'Volume and page number', 'ISSN', 'Impact factor'],
-                'Conference': ['Year of publication', 'Authors', 'Title', 'Conference Name', 'Volume and page count', 'Organized by', 'Place of conference'],
-                'BookChapter': ['Year of publication', 'Authors', 'Chapter title', 'Book title', 'Publisher', 'ISSN'],
-                'FundedResearchProject': ['Year sanctioned', 'Principal investigation', 'COPI', 'Title of the project', 'Funding Agencies', 'Amount RS', 'Status'],
-                'ResearchProposalSubmitted': ['Date of sanction', 'Principal investigation', 'COPI', 'Title', 'Funding Agencies', 'Amount applied', 'Status'],
-                'Consultancy': ['Amount Sanctioned', 'Principal investigation', 'COPI', 'Title', 'Agency', 'Year', 'Type'],
-                'ProductDevelopment': ['Product Type', 'Product Description', 'Area of application', 'Sponsoring/Funding agency', 'Faculty Name/Mentor name', 'Student name', 'Status'],
-                'Patent': ['Year of publication', 'Principal investigation', 'Patent number', 'Title', 'Indian/international', 'Status'],
-                'FDPWorkshopSeminarAttendedByFaculty': ['Date', 'Topic', 'Duration', 'Dept', 'Coordination', 'Organizer', 'Faculty Name'],
-                'MOUCS': ['Date', 'Major area', 'Topic', 'Duration', 'Certified by', 'Faculty Name/USN', 'Student Name/USN'],
-                'AchievementsAndAwards': ['Date', 'Event name', 'Organizer', 'Mentor name', 'Names of the faculty', 'Type of participation', 'Outcomes'],
-                'MOUS': ['Date', 'Duration', 'Name of the organization', 'Type of MOU', 'Outcomes', 'Faculty incharge'],
-                'FundedStudentProject': ['Year sanctioned', 'Supervison', 'Cosupervision', 'Student Name', 'Title of the project', 'Funding Agencies', 'Amount', 'Status']
+                'Journal': ['Authors', 'Year of publication', 'Title', 'Journal name', 'Volume and page number', 'ISSN', 'Impact factor'],
+                'Conference': ['Authors', 'Year of publication', 'Title', 'Conference Name', 'Volume and page count', 'Organized by', 'Place of conference'],
+                'BookChapter': ['Authors', 'Year of publication', 'Chapter title', 'Book title', 'Publisher', 'ISSN'],
+                'FundedResearchProject': ['Principal investigator', 'Co-investigator', 'Title', 'Funding agency', 'Amount', 'Duration', 'Year'],
+                'ResearchProposalSubmitted': ['Principal investigator', 'Co-investigator', 'Title', 'Funding agency', 'Amount', 'Year'],
+                'Consultancy': ['Faculty name', 'Organization', 'Consultancy provided', 'Amount', 'Year'],
+                'ProductDevelopment': ['Faculty name', 'Product name', 'Description', 'Year'],
+                'Patent': ['Inventor name', 'Title', 'Patent number', 'Status', 'Year'],
+                'FDPWorkshopSeminar': ['Faculty name', 'Program name', 'Program type', 'Organized by', 'Duration', 'Year'],
+                'MOUCS': ['Organization', 'Purpose', 'Date of signing', 'Duration'],
+                'AchievementsAndAwards': ['Faculty/Student name', 'Achievement', 'Award by', 'Year'],
+                'MOUS': ['Organization', 'Purpose', 'Date of signing', 'Validity'],
+                'FundedStudentProject': ['Student name', 'Project title', 'Funding agency', 'Amount', 'Year']
             };
     
             var fields = optionData[option];
+            if (!fields) {
+                console.error('No fields defined for option: ' + option);
+                return optionFields;
+            }
+            
             for (var i = 0; i < fields.length; i++) {
                 var field = fields[i];
                 var label = document.createElement('label');
                 label.textContent = field + ': ';
+                label.style.display = 'block';
+                label.style.marginTop = '10px';
                 optionFields.appendChild(label);
     
-                if (field === 'Date' || field === 'Date of sanction') {
+                if (field === 'Date' || field === 'Date of signing') {
                     var input = document.createElement('input');
                     input.type = 'date';
                     input.name = option + '-' + field;
+                    input.style.width = '100%';
+                    input.style.padding = '5px';
                     optionFields.appendChild(input);
                 } 
-                else if (field === 'Year of publication' || field === 'Year sanctioned') {
+                else if (field === 'Year of publication' || field === 'Year') {
                     var selectYear = document.createElement('select');
                     selectYear.name = option + '-' + field;
+                    selectYear.style.width = '100%';
+                    selectYear.style.padding = '5px';
                     var currentYear = new Date().getFullYear();
                     for (var year = currentYear; year >= 1900; year--) {
                         var optionYear = document.createElement('option');
@@ -111,33 +133,26 @@
                     }
                     optionFields.appendChild(selectYear);
                 }
+                else if (field === 'Description' || field === 'Purpose' || field === 'Consultancy provided' || field === 'Achievement') {
+                    var textarea = document.createElement('textarea');
+                    textarea.name = option + '-' + field;
+                    textarea.rows = 3;
+                    textarea.style.width = '100%';
+                    textarea.style.padding = '5px';
+                    optionFields.appendChild(textarea);
+                }
                 else {
                     var input = document.createElement('input');
                     input.type = 'text';
                     input.name = option + '-' + field;
+                    input.style.width = '100%';
+                    input.style.padding = '5px';
                     optionFields.appendChild(input);
                 }
-    
-                optionFields.appendChild(document.createElement('br'));
             }
     
             return optionFields;
         }
-        function displayAlert() {
-            alert("Information inserted successfully!");
-        }
-
-        document.getElementById('optionForm').addEventListener('submit', function(event) {
-
-            event.preventDefault();
-            
- 
-            displayAlert();
-
-            // Submit the form
-            this.submit();
-        });
-     
     </script>
     
 </body>

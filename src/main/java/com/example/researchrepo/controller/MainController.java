@@ -97,17 +97,27 @@ public class MainController {
                            @RequestParam(name = "text-input", required = false) String textInput,
                            Model model) {
         
+        System.out.println("=== ADMIN POST DEBUG ===");
+        System.out.println("Department: " + department);
+        System.out.println("Info: " + info);
+        System.out.println("Filter: " + filter);
+        System.out.println("Text Input: " + textInput);
+        
         if (department != null && !department.isEmpty()) {
             try {
+                System.out.println("Getting counts for department: " + department);
                 int[] counts = researchService.getDepartmentCounts(department);
                 StringBuilder countsStr = new StringBuilder();
                 for (int i = 0; i < counts.length; i++) {
                     if (i > 0) countsStr.append(",");
                     countsStr.append(counts[i]);
                 }
+                System.out.println("Counts: " + countsStr.toString());
                 model.addAttribute("counts", countsStr.toString());
                 return "admin";
             } catch (Exception e) {
+                System.err.println("Error getting counts: " + e.getMessage());
+                e.printStackTrace();
                 model.addAttribute("message", "Invalid department");
                 return "admin";
             }
@@ -119,25 +129,36 @@ public class MainController {
                 String filterOption = (filter != null) ? filter.toUpperCase() : "";
                 String textInputUpper = (textInput != null) ? textInput.toUpperCase() : "";
 
+                System.out.println("Fetching data for table: " + infoType);
+                System.out.println("Filter option: " + filterOption);
+                System.out.println("Text input: " + textInputUpper);
+
                 List<Map<String, Object>> data = researchService.getTableData(infoType, filterOption, textInputUpper);
+                
+                System.out.println("Rows retrieved: " + data.size());
                 
                 // Convert department IDs to names
                 for (Map<String, Object> row : data) {
                     if (row.containsKey("DEPARTMENT_ID")) {
                         Object deptId = row.get("DEPARTMENT_ID");
+                        System.out.println("Converting dept ID: " + deptId);
                         row.put("DEPARTMENT_ID", researchService.convertDepartmentIdToName(deptId));
                     }
                 }
 
                 model.addAttribute("data", data);
                 model.addAttribute("selected_table", infoType);
+                System.out.println("Data added to model");
                 return "admin";
             } catch (Exception e) {
+                System.err.println("Error retrieving data: " + e.getMessage());
+                e.printStackTrace();
                 model.addAttribute("message", "Error retrieving data: " + e.getMessage());
                 return "admin";
             }
         }
 
+        System.out.println("No action taken - returning admin page");
         return "admin";
     }
 
@@ -151,23 +172,89 @@ public class MainController {
     public String userPost(@RequestParam String department,
                           @RequestParam Map<String, String> allParams,
                           Model model) {
+        
+        // Debug logging
+        System.out.println("=== USER POST DEBUG ===");
+        System.out.println("Department: " + department);
+        System.out.println("All Parameters:");
+        allParams.forEach((key, value) -> {
+            if (!key.equals("department")) {
+                System.out.println("  " + key + " = " + value);
+            }
+        });
+        System.out.println("======================");
+        
         try {
             // Check which form was submitted and save accordingly
             if (allParams.containsKey("Journal-Authors") && !allParams.get("Journal-Authors").isEmpty()) {
+                System.out.println("Saving Journal data...");
                 researchService.saveJournalData(department, allParams);
+                model.addAttribute("message", "Journal data submitted successfully!");
             }
-            
-            if (allParams.containsKey("Conference-Authors") && !allParams.get("Conference-Authors").isEmpty()) {
+            else if (allParams.containsKey("Conference-Authors") && !allParams.get("Conference-Authors").isEmpty()) {
                 researchService.saveConferenceData(department, allParams);
+                model.addAttribute("message", "Conference data submitted successfully!");
             }
-            
-            if (allParams.containsKey("BookChapter-Authors") && !allParams.get("BookChapter-Authors").isEmpty()) {
+            else if (allParams.containsKey("BookChapter-Authors") && !allParams.get("BookChapter-Authors").isEmpty()) {
                 researchService.saveBookChapterData(department, allParams);
+                model.addAttribute("message", "Book Chapter data submitted successfully!");
             }
-
-            model.addAttribute("message", "Data submitted successfully!");
+            else if (allParams.containsKey("FundedResearchProject-Principal investigator") && 
+                     !allParams.get("FundedResearchProject-Principal investigator").isEmpty()) {
+                researchService.saveFundedResearchProjectData(department, allParams);
+                model.addAttribute("message", "Funded Research Project data submitted successfully!");
+            }
+            else if (allParams.containsKey("ResearchProposalSubmitted-Principal investigator") && 
+                     !allParams.get("ResearchProposalSubmitted-Principal investigator").isEmpty()) {
+                researchService.saveResearchProposalSubmittedData(department, allParams);
+                model.addAttribute("message", "Research Proposal data submitted successfully!");
+            }
+            else if (allParams.containsKey("Consultancy-Faculty name") && 
+                     !allParams.get("Consultancy-Faculty name").isEmpty()) {
+                researchService.saveConsultancyData(department, allParams);
+                model.addAttribute("message", "Consultancy data submitted successfully!");
+            }
+            else if (allParams.containsKey("ProductDevelopment-Faculty name") && 
+                     !allParams.get("ProductDevelopment-Faculty name").isEmpty()) {
+                researchService.saveProductDevelopmentData(department, allParams);
+                model.addAttribute("message", "Product Development data submitted successfully!");
+            }
+            else if (allParams.containsKey("Patent-Inventor name") && 
+                     !allParams.get("Patent-Inventor name").isEmpty()) {
+                researchService.savePatentData(department, allParams);
+                model.addAttribute("message", "Patent data submitted successfully!");
+            }
+            else if (allParams.containsKey("FDPWorkshopSeminar-Faculty name") && 
+                     !allParams.get("FDPWorkshopSeminar-Faculty name").isEmpty()) {
+                researchService.saveFDPWorkshopSeminarData(department, allParams);
+                model.addAttribute("message", "FDP/Workshop/Seminar data submitted successfully!");
+            }
+            else if (allParams.containsKey("MOUCS-Organization") && 
+                     !allParams.get("MOUCS-Organization").isEmpty()) {
+                researchService.saveMOUCSData(department, allParams);
+                model.addAttribute("message", "MOUCS data submitted successfully!");
+            }
+            else if (allParams.containsKey("AchievementsAndAwards-Faculty/Student name") && 
+                     !allParams.get("AchievementsAndAwards-Faculty/Student name").isEmpty()) {
+                researchService.saveAchievementsAndAwardsData(department, allParams);
+                model.addAttribute("message", "Achievements and Awards data submitted successfully!");
+            }
+            else if (allParams.containsKey("MOUS-Organization") && 
+                     !allParams.get("MOUS-Organization").isEmpty()) {
+                researchService.saveMOUSData(department, allParams);
+                model.addAttribute("message", "MOUS data submitted successfully!");
+            }
+            else if (allParams.containsKey("FundedStudentProject-Student name") && 
+                     !allParams.get("FundedStudentProject-Student name").isEmpty()) {
+                researchService.saveFundedStudentProjectData(department, allParams);
+                model.addAttribute("message", "Funded Student Project data submitted successfully!");
+            }
+            else {
+                model.addAttribute("message", "No valid form data found!");
+            }
         } catch (Exception e) {
             model.addAttribute("message", "Error: " + e.getMessage());
+            e.printStackTrace();
         }
         
         return "user";
