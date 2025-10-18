@@ -1,0 +1,46 @@
+body{
+    background-color: #202020;
+    background-image: url('../images/bc8.jpg');
+    font-family: Arial, Helvetica, sans-serif;
+    color: #fff;
+
+    background-repeat: no-repeat;
+    background-size: cover;
+
+    
+
+}
+h2{
+    text-align: center;
+    margin: 0;
+    color: #000066;
+    width: max-screen;
+    position: relative;
+    top: 20px;
+    padding: 20px;
+    margin-bottom: 250px;
+    font-size: 30px;
+}
+
+.button-container{
+    display: flex;
+    align-items: center;
+    column-gap: 50px;
+    justify-content: center;
+}
+
+button {
+    width: 200px;
+    border-radius: 25px;
+    background-color: #000099;
+    color: #fff;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: solid 1px #000066;
+    cursor: pointer;
+    transition: 0.1s;
+    font-size: 18px;
+  }
+  button:hover{
+    background-color: #0000a1;
+  }
